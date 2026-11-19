@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>社交电量测试｜你一句话就能把人聊累</title>
+<style>
+  :root{
+    --paper:#F7F8F6;
+    --ink:#22282A;
+    --accent:#3F6B5B;
+    --muted:#6C7673;
+    --line:#DDE2DE;
+    --card:#EEF1EE;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:16px;line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:460px;margin:0 auto;padding:0 22px;}
+  .screen{display:none;min-height:100vh;min-height:100dvh;}
+  .screen.on{display:flex;flex-direction:column;justify-content:center;}
+
+  /* ---------- 封面 ---------- */
+  #screen-cover{padding:64px 0 48px;}
+  .kicker{font-size:12.5px;letter-spacing:.06em;color:var(--accent);font-weight:600;margin:0 0 22px;}
+  .cover h1{
+    font-size:38px;line-height:1.24;font-weight:800;letter-spacing:-.02em;
+    margin:0 0 20px;
+  }
+  .cover h1 em{font-style:normal;color:var(--accent);}
+  .sub{font-size:16px;color:var(--ink);margin:0 0 7px;font-weight:500;}
+  .sub2{font-size:14px;line-height:1.7;color:var(--muted);margin:0 0 26px;}
+  .meta{font-size:13.5px;color:var(--muted);margin:0 0 30px;}
+  .btn{
+    display:block;width:100%;padding:15px 18px;border:none;border-radius:12px;
+    background:var(--accent);color:#fff;font-size:16.5px;font-weight:600;
+    font-family:inherit;cursor:pointer;
+  }
+  .btn:active{opacity:.86;}
+  .btn-hint{font-size:12.5px;color:var(--muted);text-align:center;margin:12px 0 0;}
+
+  /* ---------- 做题 ---------- */
+  #screen-quiz{padding:40px 0 48px;justify-content:flex-start;}
+  .qhead{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px;}
+  .qnum{font-size:12.5px;color:var(--muted);letter-spacing:.04em;}
+  .qbar{height:3px;background:var(--line);border-radius:2px;overflow:hidden;margin:0 0 34px;}
+  .qbar i{display:block;height:100%;width:0;background:var(--accent);border-radius:2px;transition:width .22s ease;}
+  .qtext{font-size:21px;line-height:1.5;font-weight:700;letter-spacing:-.01em;margin:0 0 26px;}
+  .opts{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    display:block;width:100%;text-align:left;padding:15px 17px;
+    background:#fff;border:1px solid var(--line);border-radius:11px;
+    font-size:15.5px;line-height:1.55;color:var(--ink);font-family:inherit;
+    cursor:pointer;
+  }
+  .opt:active{background:var(--card);border-color:var(--accent);}
+
+  /* ---------- 结果 ---------- */
+  #screen-result{padding:36px 0 44px;}
+  .eyebrow{font-size:12px;letter-spacing:.06em;color:var(--muted);margin:0 0 8px;}
+  .straight{
+    font-size:12.5px;line-height:1.75;color:var(--muted);
+    border-left:2px solid var(--line);
+    padding-left:12px;margin:0 0 30px;
+  }
+  .typename{
+    font-size:46px;line-height:1.16;font-weight:800;
+    letter-spacing:-.025em;margin:0 0 12px;
+  }
+  .typetag{font-size:16px;font-weight:600;color:var(--accent);margin:0 0 30px;}
+  .rule{height:1px;background:var(--line);margin:0 0 26px;}
+
+  .bats{margin:0 0 30px;}
+  .bat{margin-bottom:18px;}
+  .bat:last-child{margin-bottom:0;}
+  .batlabel{font-size:12.5px;color:var(--muted);margin:0 0 7px;}
+  .battrack{
+    position:relative;height:11px;border:1px solid var(--line);
+    border-radius:5px;background:#fff;overflow:hidden;
+  }
+  .battrack i{display:block;height:100%;background:var(--accent);border-radius:4px;}
+  .batends{display:flex;justify-content:space-between;margin:5px 0 0;}
+  .batends span{font-size:11.5px;color:var(--muted);}
+  .batstate{font-size:12.5px;font-weight:600;color:var(--ink);text-align:center;margin:5px 0 0;}
+
+  h3.sec{font-size:15.5px;font-weight:700;margin:0 0 9px;letter-spacing:-.005em;}
+  p.body{margin:0 0 26px;font-size:15px;line-height:1.78;}
+
+  .sigs{list-style:none;padding:0;margin:0 0 26px;}
+  .sigs li{
+    position:relative;padding-left:22px;margin:0 0 10px;
+    font-size:15px;line-height:1.7;
+  }
+  .sigs li:last-child{margin-bottom:0;}
+  .sigs li::before{
+    content:"—";position:absolute;left:0;color:var(--accent);font-weight:700;
+  }
+
+  .card{
+    background:var(--card);border-radius:14px;padding:20px 18px;margin:0 0 26px;
+  }
+  .card h3.sec{margin-bottom:9px;}
+  .card p.body{margin:0;font-size:15px;line-height:1.78;}
+
+  .mid{font-size:12.5px;line-height:1.75;color:var(--muted);margin:-6px 0 22px;}
+  .fast{font-size:12.5px;line-height:1.7;color:var(--muted);text-align:center;margin:18px 0 0;}
+
+  .btn2{
+    display:block;width:100%;padding:14px 18px;border:1px solid var(--line);border-radius:12px;
+    background:transparent;color:var(--ink);font-size:15.5px;font-weight:600;
+    font-family:inherit;cursor:pointer;margin:10px 0 0;
+  }
+  .btn2:active{background:var(--card);}
+
+  .foot{margin:34px 0 0;border-top:1px solid var(--line);padding-top:18px;}
+  .foot p{font-size:11.5px;line-height:1.7;color:var(--muted);margin:0 0 6px;}
+  .foot p:last-child{margin-bottom:0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 封面 -->
+  <section class="screen on" id="screen-cover">
+    <div class="kicker">社交电量 · 不测内向，测用法</div>
+    <h1>你一句话<br><em>就能把人聊累</em></h1>
+    <p class="sub">这个测试测不出你是不是社恐，也不给你的社交能力打分。</p>
+    <p class="sub2">它说的是你的电从哪来、充多久能满、什么时候该撤。</p>
+    <p class="meta">20 道题 · 约 2 分钟 · 不评等级，只告诉你什么时候该撤</p>
+    <button class="btn" id="btn-start" type="button">开始测试</button>
+    <p class="btn-hint">答完告诉你：你的电从哪来、充得多快、什么时候该走</p>
+  </section>
+
+  <!-- 做题 -->
+  <section class="screen" id="screen-quiz">
+    <div class="qhead"><span class="qnum" id="qnum">第 1 / 20 题</span></div>
+    <div class="qbar"><i id="qprog"></i></div>
+    <h2 class="qtext" id="qtext"></h2>
+    <div class="opts" id="opts"></div>
+  </section>
+
+  <!-- 结果 -->
+  <section class="screen" id="screen-result">
+    <p class="eyebrow">你的社交电量</p>
+    <p class="straight" id="straight">这个测试测不出你是不是社恐，也不给你的社交能力打分。它说的是你的电从哪来、充多久能满、什么时候该撤。</p>
+
+    <h2 class="typename" id="typename"></h2>
+    <p class="typetag" id="typetag"></p>
+    <div class="rule"></div>
+
+    <div class="bats">
+      <div class="bat">
+        <p class="batlabel">回血来源</p>
+        <div class="battrack"><i id="bar-src"></i></div>
+        <div class="batends"><span>靠自己</span><span>靠别人</span></div>
+        <p class="batstate" id="state-src"></p>
+      </div>
+      <div class="bat">
+        <p class="batlabel">回血速度</p>
+        <div class="battrack"><i id="bar-spd"></i></div>
+        <div class="batends"><span>慢</span><span>快</span></div>
+        <p class="batstate" id="state-spd"></p>
+      </div>
+    </div>
+
+    <h3 class="sec">你在什么场合掉电最快</h3>
+    <p class="body" id="dropwhere"></p>
+
+    <h3 class="sec">掉电前的三个信号</h3>
+    <ul class="sigs" id="signals"></ul>
+
+    <div class="card">
+      <h3 class="sec">你该在什么时候撤</h3>
+      <p class="body" id="quit"></p>
+    </div>
+
+    <h3 class="sec">这块电池也有它的好</h3>
+    <p class="body" id="good"></p>
+
+    <h3 class="sec">本周能做的一件</h3>
+    <p class="body" id="week"></p>
+
+    <p class="mid" id="mid" style="display:none"></p>
+
+    <button class="btn" id="btn-copy" type="button">复制我的结果</button>
+    <button class="btn2" id="btn-again" type="button">再测一次</button>
+
+    <p class="fast" id="fast" style="display:none"></p>
+
+    <div class="foot">
+      <p>这不是诊断，也不评价哪种人更好——容量不一样，用法不一样。</p>
+      <p>如果你在人多的地方会出现心慌、出汗、强烈想逃，那不是电量问题，请找专业的人聊聊。</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------------- 题目（照稿，一字不改） ---------------- */
+  var QUESTIONS = [
+    { axis:'SRC', text:'一场聚会结束，回家路上你最想做的事', options:[
+      {t:'一个人待着，谁也别找我', v:0},
+      {t:'关掉消息提示，先安静半小时', v:1},
+      {t:'看情况，有时候还想再聊两句', v:2},
+      {t:'想找个人再说说今天的事', v:3},
+      {t:'想立刻约一个人继续聊', v:4}
+    ]},
+    { axis:'SPD', text:'一场三小时的聚会结束，你大概多久能缓过来', options:[
+      {t:'三四天都缓不过来', v:0},
+      {t:'第二天还是有点空', v:1},
+      {t:'睡一觉就好', v:2},
+      {t:'到家洗个澡就恢复了', v:3},
+      {t:'基本不用缓，回家还能干别的', v:4}
+    ]},
+    { axis:'SRC', text:'这周过得挺糟，你最想怎么补回来', options:[
+      {t:'一个人出去走走，不想说话', v:0},
+      {t:'在家躺着，看点没营养的东西', v:1},
+      {t:'都行，看当时的状态', v:2},
+      {t:'找个人吃顿饭，不用聊正事', v:3},
+      {t:'找人把这一周从头到尾说一遍', v:4}
+    ]},
+    { axis:'SPD', text:'一次社交结束之后，你多久会主动约下一次', options:[
+      {t:'得等好几天才会想到约人', v:0},
+      {t:'隔两三天', v:1},
+      {t:'第二天就行', v:2},
+      {t:'当天就能约下一次', v:3},
+      {t:'一次还没结束就在想下次', v:4}
+    ]},
+    { axis:'SRC', text:'消息一天没响，你会', options:[
+      {t:'挺好，最好一直别响', v:0},
+      {t:'没什么感觉，有事才找我', v:1},
+      {t:'偶尔会想，怎么没人说话', v:2},
+      {t:'会主动给人发一条', v:3},
+      {t:'会有点闷，想找谁聊聊', v:4}
+    ]},
+    { axis:'SPD', text:'你从很累到能重新应付人，中间大概要做多少事', options:[
+      {t:'得整整一天，什么都不干', v:0},
+      {t:'半天，还得配合早睡', v:1},
+      {t:'一两个小时，躺着就行', v:2},
+      {t:'半小时，喝点东西就好', v:3},
+      {t:'几分钟，换个场合就回来了', v:4}
+    ]},
+    { axis:'SRC', text:'你更喜欢哪种周末', options:[
+      {t:'一个人，一个整天，不跟人说话', v:0},
+      {t:'大部分时间自己，见一个人就够', v:1},
+      {t:'一半一半', v:2},
+      {t:'见两三拨人，但不待太久', v:3},
+      {t:'排满，跟不同的人见面', v:4}
+    ]},
+    { axis:'SPD', text:'一场从下午聊到晚上的聚会，你会', options:[
+      {t:'撑不到晚上，中途就想走', v:0},
+      {t:'能待到晚上，但已经不太说话', v:1},
+      {t:'还行，就是有点累', v:2},
+      {t:'有意思，愿意待到结束', v:3},
+      {t:'结束还想续摊', v:4}
+    ]},
+    { axis:'SRC', text:'你难受的时候，别人的关心会让你', options:[
+      {t:'更想躲，别来问我', v:0},
+      {t:'有点不自在，但还是谢谢', v:1},
+      {t:'看是谁，熟人还行', v:2},
+      {t:'会觉得被接住了', v:3},
+      {t:'会忍不住全说出来', v:4}
+    ]},
+    { axis:'SPD', text:'你睡一觉之后，恢复多少', options:[
+      {t:'醒来还是累，得再躺半天', v:0},
+      {t:'恢复一半，还得慢一天', v:1},
+      {t:'差不多恢复了', v:2},
+      {t:'完全恢复，还能早起', v:3},
+      {t:'睡四五个小时也够', v:4}
+    ]},
+    { axis:'SRC', text:'一整天没跟人说话，你到晚上会', options:[
+      {t:'很舒服，这才是我的正常状态', v:0},
+      {t:'挺好，没什么特别的感觉', v:1},
+      {t:'有点想找人说两句', v:2},
+      {t:'会主动给人发消息', v:3},
+      {t:'会有点憋，必须找人聊', v:4}
+    ]},
+    { axis:'SPD', text:'聚会结束回到家，你通常', options:[
+      {t:'直接躺下，什么都不想干', v:0},
+      {t:'想先安静一会儿，缓一缓再收拾', v:1},
+      {t:'收拾一下，正常过日子', v:2},
+      {t:'还能顺手干点别的', v:3},
+      {t:'感觉还行，甚至可以再安排一场', v:4}
+    ]},
+    { axis:'SRC', text:'一件让你很开心的事，你第一反应', options:[
+      {t:'自己高兴一会儿就行', v:0},
+      {t:'记下来，不一定要说', v:1},
+      {t:'看情况，有合适的人就说', v:2},
+      {t:'想告诉某个人', v:3},
+      {t:'想立刻打电话说一遍', v:4}
+    ]},
+    { axis:'SPD', text:'你请假一天在家，第二天上班感觉', options:[
+      {t:'还是有点撑不住', v:0},
+      {t:'恢复了大半', v:1},
+      {t:'正常了', v:2},
+      {t:'挺有劲的', v:3},
+      {t:'感觉像休了三天', v:4}
+    ]},
+    { axis:'SRC', text:'你会怎么形容「待着舒服」', options:[
+      {t:'一个人，安静，没人找', v:0},
+      {t:'有人在不远处，但不用说话', v:1},
+      {t:'一个人或两三个人都行', v:2},
+      {t:'跟熟的人在一起，随便聊', v:3},
+      {t:'热闹的地方，有人气', v:4}
+    ]},
+    { axis:'SPD', text:'一件事连着一件事的时候，你的状态', options:[
+      {t:'第二件开始就跟不上了', v:0},
+      {t:'勉强能撑，但明显变慢', v:1},
+      {t:'正常', v:2},
+      {t:'还能保持效率', v:3},
+      {t:'连着做反而更顺', v:4}
+    ]},
+    { axis:'SRC', text:'遇到麻烦，你倾向', options:[
+      {t:'自己处理完再说', v:0},
+      {t:'先自己弄，弄不动再问', v:1},
+      {t:'看是什么事', v:2},
+      {t:'先找人说一下', v:3},
+      {t:'一定会找人，一个人扛不住', v:4}
+    ]},
+    { axis:'SPD', text:'被人打断、被临时加事之后，你回到原来的状态要多久', options:[
+      {t:'半天都回不来', v:0},
+      {t:'得一两个小时', v:1},
+      {t:'缓一下就好', v:2},
+      {t:'很快，接着干', v:3},
+      {t:'完全不影响，还有点被激起来的劲', v:4}
+    ]},
+    { axis:'SRC', text:'一个很长很热闹的假期结束，你最想', options:[
+      {t:'什么都不安排，一个人待着', v:0},
+      {t:'安静几天', v:1},
+      {t:'正常就好', v:2},
+      {t:'想见见平时没见到的朋友', v:3},
+      {t:'想马上再约一场', v:4}
+    ]},
+    { axis:'SPD', text:'你觉得自己的「电量」更像', options:[
+      {t:'一块很老的电池，得充很久', v:0},
+      {t:'容量不大，充得也慢', v:1},
+      {t:'正常电池，充一夜够用一天', v:2},
+      {t:'充得挺快，能撑挺久', v:3},
+      {t:'快充，充电五分钟能用很久', v:4}
+    ]}
+  ];
+
+  var AXES = ['SRC', 'SPD'];
+  var TOTAL_Q = QUESTIONS.length;
+
+  /* ---------------- 共用：掉电前的三个信号（全类型共用） ---------------- */
+  var SIGNALS = [
+    '你开始笑而不语——不是不想接，是接不上了。',
+    '你开始频繁看手机，其实没有新消息。',
+    '你开始想「什么时候能走」，这时候电量已经到底了，后面全是硬撑。'
+  ];
+
+  /* ---------------- 结果文案（照稿） ---------------- */
+  var CONTENT = {
+    SOLO_SLOW: {
+      tag: '你不是烦人，你是耗得快',
+      dropwhere: '人越多越杂的场合掉得最快——不是怕人，是同时间要处理的信息太多。饭桌上五个人同时说话、KTV、嘈杂的餐厅，这类地方你在半小时内就到了「笑而不语」那一步。',
+      quit: '进场就把时间说定。「我九点得走」比「我有点事先走了」好用十倍——前者没人再劝，后者会有人追问，这一问又要多耗你二十分钟。你的最佳撤退时机不是累了才走，是「开始只想盯着一个地方发呆」那一刻，那时候走还体面，再撑下去就是硬扛。',
+      quitShare: '进场就把时间说定。',
+      good: '你能一个人待着不难受，这是很多人没有的能力。你的深度和专注都从这儿来。',
+      week: '下次出席之前，先给自己定一个离场时间，当场说出去。说出口的那次，你回家的路会轻松很多。'
+    },
+    SOLO_FAST: {
+      tag: '你能撑很久，但撑完必须彻底关机',
+      dropwhere: '连续不断的场合——一场接一场、一天开三个会、周末排满。单场你不怕，你怕的是没有空白。',
+      quit: '你不用早走，你需要的是「回去以后先关机」。你的问题不是撑不住，是撑完以后还要回消息、还要复盘、还要应下明天的事。你真正该撤的不是聚会，是回家以后那两个小时的手机。',
+      quitShare: '你不用早走，你需要的是「回去以后先关机」。',
+      good: '你的弹性很好，多数场合你都能应付，别人不会担心你，这在职场里是实打实的优势。',
+      week: '下次聚会结束，回家先关两小时消息，不看群、不回工作。实验一次，看看第二天是不是完全不同。'
+    },
+    REN_SLOW: {
+      tag: '你需要人，但一次只能接一两个',
+      dropwhere: '三个以上的场合掉得最快。你并不排斥人，但你在一群人里会同时失去「说」和「听」的位置——最后变成站着笑的那个。',
+      quit: '看到自己「只想盯着一个人说话」的时候，就该走了。这是你要从大场合退成一对一的那一刻。硬留下来，你会把自己耗到第二天都缓不过来。',
+      quitShare: '看到自己「只想盯着一个人说话」的时候，就该走了。',
+      good: '你对人是有真兴趣的，你能记住别人说过的小事，这种人在关系里很珍贵。',
+      week: '下次大聚会里，找个借口把一个人单独约出来喝杯东西。把一场五人的场合，换成一次一小时的对话，看看电量差多少。'
+    },
+    REN_FAST: {
+      tag: '你不怕人，你怕的是没人',
+      dropwhere: '跟不对的人待着的场合。人多热闹反而让你回血，真正耗你的是「笑得很努力但一句真话都没说」的那种场合。',
+      quit: '不是累的时候撤，是发现自己一直在演的时候撤。你很容易在错的关系里待很久，因为只要有人，你就觉得自己还有电——但那种电是虚的，回家会有一阵空。',
+      quitShare: '不是累的时候撤，是发现自己一直在演的时候撤。',
+      good: '你是那种能把气氛带起来的人，很多场合因为你才不至于冷掉。这一条是真的值钱。',
+      week: '这周推掉一个你其实不想去的饭局。看看推掉之后，你是真的少了什么，还是只是不习惯。'
+    },
+    AMPHIB: {
+      name: '两栖型',
+      tag: '一个人也行，有人也行',
+      dropwhere: '看情况——你没有一个固定的掉电场景，同样一场聚会，状态好的时候没事，状态差的时候半小时就到底。你的电量和「当时心里的事」关系更大。',
+      quit: '你该盯的不是场合，是状态。出门前先问自己一句「今天心里有没有挂着别的事」，有的话就别排长局。你不需要一个固定的撤退时间，你需要一个固定的判断标准：今天我是来见人的，还是来完成任务的。前者可以多待，后者一小时就走。',
+      quitShare: '你该盯的不是场合，是状态。',
+      good: '你不被类型困住。你需要人时能找到人，需要独处时也能安然一个人，这种弹性很多人求不来。',
+      week: '下次出门前，给自己 10 秒，判断今天是哪一种，按那个判断决定待多久。'
+    }
+  };
+
+  var TYPE_CN = {
+    SOLO_SLOW: '独处慢充型',
+    SOLO_FAST: '独处快充型',
+    REN_SLOW: '靠人慢充型',
+    REN_FAST: '靠人快充型'
+  };
+
+  /* ---------------- 计分 ---------------- */
+  function scoreOf(answers){
+    var score = { SRC:0, SPD:0 };
+    for (var i = 0; i < TOTAL_Q; i++){
+      score[QUESTIONS[i].axis] += answers[i] || 0;
+    }
+    return {
+      SRC: Math.round(score.SRC / 40 * 100),
+      SPD: Math.round(score.SPD / 40 * 100)
+    };
+  }
+
+  function maxSamePos(answers){
+    var bucket = [0,0,0,0,0];
+    for (var i = 0; i < TOTAL_Q; i++) bucket[answers[i]]++;
+    return Math.max.apply(null, bucket);
+  }
+
+  function inMid(v){ return v >= 45 && v <= 55; }
+
+  function judge(answers){
+    var pct = scoreOf(answers);
+    var src = pct.SRC, spd = pct.SPD;
+    var bothMid = inMid(src) && inMid(spd);
+    var type;
+    if (bothMid){
+      type = 'AMPHIB';
+    } else {
+      var srcHigh = src > 50;
+      var spdHigh = spd > 50;
+      if (!srcHigh && !spdHigh) type = 'SOLO_SLOW';
+      else if (!srcHigh && spdHigh) type = 'SOLO_FAST';
+      else if (srcHigh && !spdHigh) type = 'REN_SLOW';
+      else type = 'REN_FAST';
+    }
+    return {
+      src: src,
+      spd: spd,
+      srcHigh: src > 50,
+      spdHigh: spd > 50,
+      type: type,
+      typeCn: type === 'AMPHIB' ? CONTENT.AMPHIB.name : TYPE_CN[type],
+      amphib: bothMid,
+      midSrc: inMid(src),
+      midSpd: inMid(spd),
+      maxSamePos: maxSamePos(answers),
+      tooFast: maxSamePos(answers) >= 16
+    };
+  }
+
+  /* 条下方状态词 / 分享文案里的取法 */
+  function stateOf(value, lowWord, highWord){
+    if (value <= 40) return lowWord;
+    if (value >= 60) return highWord;
+    return null; // 一半一半 / 一般
+  }
+
+  /* ---------------- 界面 ---------------- */
+  var $cover = document.getElementById('screen-cover');
+  var $quiz  = document.getElementById('screen-quiz');
+  var $result= document.getElementById('screen-result');
+  var answers = [];
+  var cursor = 0;
+
+  function show(el){
+    [$cover, $quiz, $result].forEach(function(s){ s.classList.remove('on'); });
+    el.classList.add('on');
+    window.scrollTo(0, 0);
+  }
+
+  function renderQuestion(){
+    var q = QUESTIONS[cursor];
+    document.getElementById('qnum').textContent = '第 ' + (cursor + 1) + ' / ' + TOTAL_Q + ' 题';
+    document.getElementById('qprog').style.width = (cursor / TOTAL_Q * 100) + '%';
+    document.getElementById('qtext').textContent = q.text;
+    var box = document.getElementById('opts');
+    box.textContent = '';
+    q.options.forEach(function(o, i){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'opt';
+      b.textContent = o.t;
+      b.addEventListener('click', function(){ pick(i); });
+      box.appendChild(b);
+    });
+  }
+
+  function pick(index){
+    answers[cursor] = QUESTIONS[cursor].options[index].v;
+    cursor++;
+    if (cursor >= TOTAL_Q){ finish(); return; }
+    renderQuestion();
+  }
+
+  function finish(){
+    var j = judge(answers);
+    renderResult(j);
+    show($result);
+  }
+
+  function renderResult(j){
+    var c = j.type === 'AMPHIB' ? CONTENT.AMPHIB : CONTENT[j.type];
+
+    document.getElementById('typename').textContent = j.typeCn;
+    document.getElementById('typetag').textContent = c.tag;
+
+    document.getElementById('bar-src').style.width = j.src + '%';
+    document.getElementById('bar-spd').style.width = j.spd + '%';
+
+    var sSrc = stateOf(j.src, '靠自己', '靠别人');
+    document.getElementById('state-src').textContent = sSrc || '一半一半';
+    var sSpd = stateOf(j.spd, '慢', '快');
+    document.getElementById('state-spd').textContent = sSpd || '一般';
+
+    document.getElementById('dropwhere').textContent = c.dropwhere;
+
+    var sig = document.getElementById('signals');
+    sig.textContent = '';
+    SIGNALS.forEach(function(t){
+      var li = document.createElement('li');
+      li.textContent = t;
+      sig.appendChild(li);
+    });
+
+    document.getElementById('quit').textContent = c.quit;
+    document.getElementById('good').textContent = c.good;
+    document.getElementById('week').textContent = c.week;
+
+    // 近中线提示
+    var mids = [];
+    if (j.midSrc) mids.push('你『电从哪来』这条线在中间——一个人和有人陪，你都能回血。');
+    if (j.midSpd) mids.push('你『充得多快』这条线在中间——有时候一会儿就好，有时候得缓一整天。');
+    var $mid = document.getElementById('mid');
+    if (mids.length){
+      $mid.textContent = mids.join(' ');
+      $mid.style.display = '';
+    } else {
+      $mid.textContent = '';
+      $mid.style.display = 'none';
+    }
+
+    // 答得太快
+    var $fast = document.getElementById('fast');
+    if (j.tooFast){
+      $fast.textContent = '你这 20 道答得很一致——如果刚才快速点的，可以再测一次，结果会更准。';
+      $fast.style.display = '';
+    } else {
+      $fast.textContent = '';
+      $fast.style.display = 'none';
+    }
+
+    // 分享文案
+    copyText = '我的社交电量：' + j.typeCn + '\n'
+      + '电从哪来：' + (sSrc || '一半一半') + '　充得多快：' + (sSpd || '一般') + '\n'
+      + '我该在什么时候撤：' + c.quitShare + '\n'
+      + '你也测测：' + location.href;
+  }
+
+  /* ---------------- 按钮 ---------------- */
+  var copyText = '';
+
+  document.getElementById('btn-start').addEventListener('click', function(){
+    answers = []; cursor = 0;
+    renderQuestion();
+    show($quiz);
+  });
+
+  document.getElementById('btn-again').addEventListener('click', function(){
+    answers = []; cursor = 0;
+    renderQuestion();
+    show($quiz);
+  });
+
+  var $copy = document.getElementById('btn-copy');
+  $copy.addEventListener('click', function(){
+    var done = function(ok){
+      $copy.textContent = ok ? '已复制' : '请长按选中复制';
+      setTimeout(function(){ $copy.textContent = '复制我的结果'; }, 2000);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(copyText).then(function(){ done(true); }, function(){ done(false); });
+    } else {
+      done(false);
+    }
+  });
+
+  /* ---------------- 给自测用 ---------------- */
+  window.__DIANLIANG__ = {
+    QUESTIONS: QUESTIONS,
+    AXES: AXES,
+    TYPE_CN: TYPE_CN,
+    CONTENT: CONTENT,
+    SIGNALS: SIGNALS,
+    TOTAL_Q: TOTAL_Q,
+    scoreOf: scoreOf,
+    maxSamePos: maxSamePos,
+    stateOf: stateOf,
+    judge: judge,
+    answersList: function(){ return answers.slice(); },
+    setAnswers: function(list){ answers = list.slice(); },
+    finish: finish,
+    goTo: function(n){
+      if (n === 0){ answers = []; cursor = 0; show($cover); return; }
+      if (n === 1){ renderQuestion(); show($quiz); return; }
+      finish();
+    },
+    optionCount: function(){ return QUESTIONS[cursor].options.length; },
+    clickOption: function(index){
+      var buttons = document.querySelectorAll('#opts .opt');
+      if (!buttons[index]) return;
+      buttons[index].click();
+    },
+    screens: function(){
+      return {
+        cover: $cover.classList.contains('on'),
+        quiz: $quiz.classList.contains('on'),
+        result: $result.classList.contains('on')
+      };
+    },
+    dom: function(){
+      var q = function(id){ return document.getElementById(id); };
+      var vis = function(id){ return q(id).style.display !== 'none' && q(id).textContent !== ''; };
+      return {
+        straight: q('straight').textContent,
+        typename: q('typename').textContent,
+        typetag: q('typetag').textContent,
+        barSrc: q('bar-src').style.width,
+        barSpd: q('bar-spd').style.width,
+        stateSrc: q('state-src').textContent,
+        stateSpd: q('state-spd').textContent,
+        dropwhere: q('dropwhere').textContent,
+        signals: Array.prototype.slice.call(document.querySelectorAll('#signals li')).map(function(li){ return li.textContent; }),
+        quit: q('quit').textContent,
+        good: vis('good') ? q('good').textContent : null,
+        week: vis('week') ? q('week').textContent : null,
+        mid: vis('mid') ? q('mid').textContent : null,
+        fast: vis('fast') ? q('fast').textContent : null,
+        foot: Array.prototype.slice.call(document.querySelectorAll('.foot p')).map(function(p){ return p.textContent; }),
+        copyLabel: q('btn-copy').textContent
+      };
+    }
+  };
+
+  renderQuestion();
+})();
+</script>
+</body>
+</html>
